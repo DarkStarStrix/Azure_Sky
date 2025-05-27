@@ -176,6 +176,7 @@ As of May 27, 2025, Azure Sky Optimizer is stable and production-ready.
 For questions or collaboration, please open an issue on GitHub.
 
 Kaggle Notebook: https://www.kaggle.com/code/allanwandia/non-convex-research
+
 Writeup It has old metrics so watch out: https://github.com/DarkStarStrix/CSE-Repo-of-Advanced-Computation-ML-and-Systems-Engineering/blob/main/Papers/Computer_Science/Optimization/Optimization_Algothrims_The_HimmelBlau_Function_Case_Study.pdf
 
 ---
