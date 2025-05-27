@@ -6,7 +6,7 @@ Developed as part of an R&D initiative, Azure Sky combines structured stochastic
 
 ---
 
-## 🔍 Overview
+## Overview
 
 Conventional optimizers like Adam and AdamW often converge prematurely to sharp local minima, compromising generalization. Azure Sky leverages SA’s global search in early stages and Adam’s local convergence later, ensuring both deep exploration and precise convergence.
 
@@ -18,7 +18,7 @@ Conventional optimizers like Adam and AdamW often converge prematurely to sharp 
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 - **Hybrid Optimization:** Combines SA’s global search with Adam’s local refinement.
 - **Optimized Hyperparameters:** Tuned via Optuna (best trial: 0.0893 on Two Moons dataset).
@@ -28,7 +28,7 @@ Conventional optimizers like Adam and AdamW often converge prematurely to sharp 
 
 ---
 
-## 📦 Installation
+## Installation
 
 Clone the repository and install using [uv](https://github.com/astral-sh/uv):
 
@@ -47,7 +47,7 @@ uv pip install -e .
 
 ---
 
-## 🛠️ Usage Examples
+## Usage Examples
 
 Azure Sky integrates seamlessly into PyTorch workflows. Below are usage examples for various parameter configurations.
 
@@ -103,7 +103,7 @@ For additional examples, see `azure_optimizer/usage_example.py`.
 
 ---
 
-## 🔧 Hyperparameters
+## Hyperparameters
 
 Default hyperparameters (from Optuna Trial 99, best validation loss: 0.0893 on Two Moons):
 
@@ -117,7 +117,7 @@ Default hyperparameters (from Optuna Trial 99, best validation loss: 0.0893 on T
 
 ---
 
-## 📊 Performance
+## Performance
 
 Evaluated on the Two Moons dataset (5000 samples, 20% noise):
 
@@ -133,7 +133,7 @@ Azure Sky prioritizes robust generalization over rapid convergence, making it id
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome!
 
@@ -147,13 +147,13 @@ Please follow PEP 8 standards. Tests are not yet implemented; contributions to a
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 📚 Citation
+## Citation
 
 If you use Azure Sky Optimizer in your research or engineering projects, please cite:
 
@@ -163,7 +163,7 @@ If you use Azure Sky Optimizer in your research or engineering projects, please 
 
 ---
 
-## 📅 Project Status
+## Project Status
 
 As of May 27, 2025, Azure Sky Optimizer is stable and production-ready.
 
@@ -175,9 +175,12 @@ As of May 27, 2025, Azure Sky Optimizer is stable and production-ready.
 
 For questions or collaboration, please open an issue on GitHub.
 
+Kaggle Notebook: https://www.kaggle.com/code/allanwandia/non-convex-research
+Writeup It has old metrics so watch out: https://github.com/DarkStarStrix/CSE-Repo-of-Advanced-Computation-ML-and-Systems-Engineering/blob/main/Papers/Computer_Science/Optimization/Optimization_Algothrims_The_HimmelBlau_Function_Case_Study.pdf
+
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 azure-sky-optimizer/
