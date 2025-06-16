@@ -21,7 +21,7 @@ Conventional optimizers like Adam and AdamW often converge prematurely to sharp 
 ## Key Features
 
 - **Hybrid Optimization:** Combines SA’s global search with Adam’s local refinement.
-- **Optimized Hyperparameters:** Tuned via Optuna (best trial: 0.0893 on Two Moons dataset).
+- **Optimized Hyperparameters:** Tuned via Optuna (the best trial: 0.0893 on Two Moons dataset).
 - **Flexible Parameter Handling:** Supports parameter lists, named parameters, and parameter groups with group-specific learning rates.
 - **Production-Ready Stability:** Includes gradient clipping and loss spike detection.
 - **PyTorch Compatibility:** Fully integrated with PyTorch’s `optim` module.
@@ -105,15 +105,15 @@ For additional examples, see `azure_optimizer/usage_example.py`.
 
 ## Hyperparameters
 
-Default hyperparameters (from Optuna Trial 99, best validation loss: 0.0893 on Two Moons):
+Default hyperparameters (from Optuna Trial 99, the best validation loss: 0.0893 on Two Moons):
 
-| Parameter    | Value                | Description                        |
-|--------------|----------------------|------------------------------------|
-| lr           | 0.0007518383921113902| Learning rate for Adam phase       |
-| T0           | 2.2723218904585964   | Initial temperature for SA         |
-| sigma        | 0.17181058166567398  | Perturbation strength for SA       |
-| SA_steps     | 5                    | Steps for SA phase                 |
-| sa_momentum  | 0.6612913488540948   | Momentum for SA updates            |
+| Parameter   | Value                 | Description                  |
+|-------------|-----------------------|------------------------------|
+| lr          | 0.0007518383921113902 | Learning rate for Adam phase |
+| T0          | 2.2723218904585964    | Initial temperature for SA   |
+| sigma       | 0.17181058166567398   | Perturbation strength for SA |
+| SA_steps    | 5                     | Steps for SA phase           |
+| sa_momentum | 0.6612913488540948    | Momentum for SA updates      |
 
 ---
 
