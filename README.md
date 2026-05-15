@@ -18,6 +18,16 @@ Conventional optimizers like Adam and AdamW often converge prematurely to sharp 
 
 ---
 
+## Design Philosophy
+
+Azure Sky is built for a specific class of problems that standard gradient-based optimizers handle poorly: **high-dimensional, non-convex landscapes** where the loss surface contains many competing local minima of similar depth. This is the defining characteristic of scientific machine learning (SciML) workloads — neural ODEs, physics-informed neural networks, symbolic regression, and energy-based models all share this property. In these settings, an optimizer that follows the local gradient faithfully will almost always converge to a suboptimal basin, and the quality of the solution found matters far more than the raw speed of convergence.
+
+Azure Sky makes an explicit trade-off: **some per-step performance is sacrificed in exchange for convergence stability and solution quality**. The Simulated Annealing phase introduces controlled stochastic perturbations that allow the optimizer to escape sharp local minima and saddle points — structures that are endemic to high-dimensional non-convex problems. This is not a bug or a limitation; it is the intended behaviour. The SA noise is what gives the optimizer its ability to explore the loss landscape broadly before the Adam phase takes over for precise local refinement.
+
+This places Azure Sky in the **hybrid metaheuristic-gradient** niche of the optimizer ecosystem, alongside methods like Stochastic Gradient Langevin Dynamics (SGLD) and Entropy-SGD. It is not a drop-in replacement for Adam in standard deep learning pipelines where the landscape is well-behaved — for those tasks, Adam or AdamW will converge faster. Azure Sky is the right tool when the problem demands robustness over speed: when you need confidence that the solution found is in a genuinely good basin, not just the nearest one.
+
+---
+
 ## Performance
 
 The Azure Sky optimizer has been rigorously tested against standard optimizers on complex mathematical benchmark functions. The plots below illustrate its performance across the Himmelblau, Ackley N2 (10D), and Adjiman functions over 500 optimization steps.
