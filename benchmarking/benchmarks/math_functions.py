@@ -178,9 +178,59 @@ class NonConvexDial(ScalableBenchmark):
         return np.zeros(self.dim)
 
 
+class HimmelblauND(ScalableBenchmark):
+    """
+    N-dimensional generalised Himmelblau function.
+
+    The classic 2D Himmelblau has four global minima of equal value (f=0),
+    making it an ideal test of an optimizer's ability to find *any* of several
+    equally good solutions rather than converging to a single basin. The N-D
+    generalisation pairs consecutive dimensions into (x_{2i}, x_{2i+1}) blocks,
+    each contributing a standard Himmelblau term, and sums them. For odd
+    dimensionality the final unpaired dimension contributes a simple quadratic.
+
+    This structure preserves the multi-modal, deceptive character of the
+    original at arbitrary scale. Global minimum value: 0.0 at any of the
+    four known 2D minima replicated across all dimension pairs.
+
+    Known 2D global minima (each pair):
+        (3.0,       2.0      )  f = 0
+        (-2.805118, 3.131312 )  f = 0
+        (-3.779310, -3.283186)  f = 0
+        ( 3.584428, -1.848126)  f = 0
+    """
+
+    name = "Himmelblau"
+    global_min_value = 0.0
+
+    def evaluate(self, x: torch.Tensor) -> torch.Tensor:
+        n = x.size(0)
+        total = torch.tensor(0.0, dtype=x.dtype)
+        # Process pairs of dimensions
+        for i in range(0, n - 1, 2):
+            xi  = x[i]
+            xi1 = x[i + 1]
+            total = total + (xi ** 2 + xi1 - 11.0) ** 2 + (xi + xi1 ** 2 - 7.0) ** 2
+        # Unpaired final dimension (odd n)
+        if n % 2 == 1:
+            total = total + x[-1] ** 2
+        return total
+
+    def global_minimum(self) -> np.ndarray:
+        """
+        Return the canonical global minimum (3, 2) replicated across all pairs.
+        """
+        gmin = np.zeros(self.dim)
+        for i in range(0, self.dim - 1, 2):
+            gmin[i]     = 3.0
+            gmin[i + 1] = 2.0
+        return gmin
+
+
 BENCHMARK_MAP = {
     'Ackley':     AckleyND,
     'Rastrigin':  RastriginND,
     'Rosenbrock': RosenbrockND,
     'Schwefel':   SchwefelND,
+    'Himmelblau': HimmelblauND,
 }

@@ -101,6 +101,12 @@ NONCONVEXITY_SWEEP = [0.0, 0.5, 1.0, 2.0, 5.0, 10.0]
 # ── Mathematical benchmark registry ──────────────────────────────────────────
 MATH_BENCHMARK_REGISTRY = ['Ackley', 'Rastrigin', 'Rosenbrock', 'Schwefel', 'Himmelblau']
 
+# ── Himmelblau-specific large-scale sweep ─────────────────────────────────────
+# Extended dimensionality range for the dedicated Himmelblau scaling study.
+# The generalised N-D Himmelblau is evaluated at much higher dims to stress-test
+# the SA exploration phase against pure gradient methods.
+HIMMELBLAU_DIM_SWEEP = [2, 4, 8, 16, 32, 50, 100, 200, 500]
+
 # ── Neural network benchmark registry ────────────────────────────────────────
 # Each entry: (dataset, hidden_sizes) — controls effective parameter-space dimensionality
 NN_BENCHMARK_REGISTRY = [
