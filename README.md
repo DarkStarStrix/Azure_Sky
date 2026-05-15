@@ -1,14 +1,14 @@
 # Azure Sky Optimizer
 
-Azure Sky Optimizer is a hybrid optimizer for PyTorch, integrating Simulated Annealing (SA) with Adam to provide robust exploration and precise exploitation in non-convex optimization tasks. Designed for complex machine learning challenges, Azure Sky excels in domains requiring deep exploration of rugged loss landscapes, such as scientific machine learning, symbolic reasoning, and protein folding.
+Azure Sky Optimizer is a hybrid optimizer for PyTorch, integrating Simulated Annealing (SA) with Adam to provide robust exploration and precise exploitation in non-convex optimization tasks. Designed for complex machine learning challenges, Azure Sky excels in domains requiring deep exploration of rugged loss landscapes, such as scientific machine learning (SciML), symbolic reasoning, and protein folding.
 
-Developed as part of an R&D initiative, Azure Sky combines structured stochastic exploration with gradient-based refinement, achieving stable convergence and strong generalization in multi-modal search spaces.
+Developed as part of an R&D initiative, Azure Sky combines structured stochastic exploration with gradient-based refinement. It acknowledges the fundamental trade-off in SciML: non-convex approaches offer more robust problem representation and noise resilience but introduce significant engineering complexity. Azure Sky balances this by achieving stable convergence and strong generalization in multi-modal search spaces.
 
 ---
 
 ## Overview
 
-Conventional optimizers like Adam and AdamW often converge prematurely to sharp local minima, compromising generalization. Azure Sky leverages SA’s global search in early stages and Adam’s local convergence later, ensuring both deep exploration and precise convergence.
+Conventional optimizers like Adam and AdamW often converge prematurely to sharp local minima, compromising generalization. Azure Sky leverages Simulated Annealing's global search in the early stages and Adam's local convergence later, ensuring both deep exploration and precise convergence.
 
 ### Core Innovations
 
@@ -18,52 +18,75 @@ Conventional optimizers like Adam and AdamW often converge prematurely to sharp 
 
 ---
 
+## Performance
+
+The Azure Sky optimizer has been rigorously tested against standard optimizers on complex mathematical benchmark functions. The plots below illustrate its performance across the Himmelblau, Ackley N2 (10D), and Adjiman functions over 500 optimization steps.
+
+![Benchmark Convergence](docs/images/benchmark_convergence.png)
+
+Azure Sky demonstrates rapid and stable convergence, particularly in high-dimensional and highly non-convex spaces. In the Himmelblau test, you can see the Simulated Annealing noise during the early steps (the blue path), which allows the optimizer to explore before settling into a global minimum.
+
+![Himmelblau Paths](docs/images/himmelblau_paths.png)
+
+*The Himmelblau path visualization shows Azure Sky (left) employing initial stochastic exploration before smoothly converging to a known minimum, compared to Adam's (right) direct gradient descent.*
+
+![Final Loss Comparison](docs/images/final_loss_comparison.png)
+
+---
+
 ## Key Features
 
 - **Hybrid Optimization:** Combines SA’s global search with Adam’s local refinement.
-- **Optimized Hyperparameters:** Tuned via Optuna (the best trial: 0.0893 on Two Moons dataset).
 - **Flexible Parameter Handling:** Supports parameter lists, named parameters, and parameter groups with group-specific learning rates.
-- **Production-Ready Stability:** Includes gradient clipping and loss spike detection.
-- **PyTorch Compatibility:** Fully integrated with PyTorch’s `optim` module.
+- **Production-Ready Stability:** Includes PyTorch-native gradient clipping and loss spike detection hooks.
+- **PyTorch Compatibility:** Fully integrated with PyTorch’s `optim.Optimizer` API.
+- **Evaluation Dashboard:** Includes a Gradio-based frontend (`App.py`) for interactive benchmarking.
 
 ---
 
 ## Installation
 
-Clone the repository and install using [uv](https://github.com/astral-sh/uv):
+Clone the repository and install dependencies using `pip` or your preferred package manager.
 
 ```bash
-git clone https://github.com/yourusername/azure-sky-optimizer.git
-cd azure-sky-optimizer
-uv pip install -e .
+git clone https://github.com/DarkStarStrix/Azure_Sky.git
+cd Azure_Sky
+pip install -e .
 ```
 
 **Requirements:**
-- Python >= 3.8
-- PyTorch >= 1.10.0
-- NumPy >= 1.20.0
-
-> **Note:** Ensure `uv` is installed. See [uv documentation](https://github.com/astral-sh/uv) for instructions.
+- Python >= 3.10
+- PyTorch >= 2.0.0
+- NumPy >= 1.24.0, < 2.0.0
+- SciPy >= 1.11.0
+- Matplotlib >= 3.7.0
+- Gradio >= 4.0.0
 
 ---
 
 ## Usage Examples
 
-Azure Sky integrates seamlessly into PyTorch workflows. Below are usage examples for various parameter configurations.
+Azure Sky integrates seamlessly into PyTorch workflows. It acts as a drop-in replacement for standard optimizers like `torch.optim.Adam`.
 
 ### Basic Usage
 
 ```python
 import torch
 import torch.nn as nn
-from azure_optimizer import Azure
+from Backend.optimizers.azure_optim import Azure
 
+# Define a simple model and loss function
 model = nn.Linear(10, 2)
 criterion = nn.CrossEntropyLoss()
-optimizer = Azure(model.parameters())
 
+# Initialize the Azure optimizer
+optimizer = Azure(model.parameters(), lr=0.001, sa_steps=100)
+
+# Dummy data
 inputs = torch.randn(32, 10)
 targets = torch.randint(0, 2, (32,))
+
+# Standard PyTorch training step
 optimizer.zero_grad()
 outputs = model(inputs)
 loss = criterion(outputs, targets)
@@ -71,15 +94,9 @@ loss.backward()
 optimizer.step()
 ```
 
-### Parameter Lists
-
-```python
-var1 = torch.nn.Parameter(torch.randn(2, 2))
-var2 = torch.nn.Parameter(torch.randn(2, 2))
-optimizer = Azure([var1, var2])
-```
-
 ### Parameter Groups with Custom Learning Rates
+
+You can define parameter groups to apply different learning rates or configurations to specific layers of your model.
 
 ```python
 class SimpleModel(nn.Module):
@@ -93,63 +110,46 @@ class SimpleModel(nn.Module):
         return self.classifier(x)
 
 model = SimpleModel()
+
+# Apply a higher learning rate to the base layer
 optimizer = Azure([
     {'params': model.base.parameters(), 'lr': 1e-2},
-    {'params': model.classifier.parameters()}
+    {'params': model.classifier.parameters(), 'lr': 1e-3}
 ])
 ```
 
-For additional examples, see `azure_optimizer/usage_example.py`.
+For a complete runnable script, see `usage_example.py` in the repository root.
 
 ---
 
 ## Hyperparameters
 
-Default hyperparameters (from Optuna Trial 99, the best validation loss: 0.0893 on Two Moons):
+Azure Sky introduces several unique hyperparameters to control the Simulated Annealing phase:
 
-| Parameter   | Value                 | Description                  |
-|-------------|-----------------------|------------------------------|
-| lr          | 0.0007518383921113902 | Learning rate for Adam phase |
-| T0          | 2.2723218904585964    | Initial temperature for SA   |
-| sigma       | 0.17181058166567398   | Perturbation strength for SA |
-| SA_steps    | 5                     | Steps for SA phase           |
-| sa_momentum | 0.6612913488540948    | Momentum for SA updates      |
-
----
-
-## Performance
-
-Evaluated on the Two Moons dataset (5000 samples, 20% noise):
-
-- **Best Validation Loss:** 0.0919
-- **Final Validation Accuracy:** 96.7%
-- **Epochs to Convergence:** 50
-
-Compared to:
-- **Adam:** loss 0.0927, acc 96.8%
-- **AdamW:** loss 0.0917, acc 97.1%
-
-Azure Sky prioritizes robust generalization over rapid convergence, making it ideal for pre-training and tasks requiring deep exploration.
+| Parameter   | Default | Description |
+|-------------|---------|-------------|
+| `lr`        | 1e-3    | Base learning rate for the Adam phase. |
+| `T0`        | 1.0     | Initial temperature for Simulated Annealing. |
+| `sigma`     | 0.1     | Perturbation strength (noise scaling factor) for SA. |
+| `sa_steps`  | 1000    | Number of steps during which the SA phase is active before fully transitioning to Adam. |
+| `sa_momentum`| 0.9    | Momentum factor for SA updates. |
 
 ---
 
-## Contributing
+## Project Status
 
-Contributions are welcome!
+As of **May 14, 2026**, the Azure Sky Optimizer codebase has undergone a comprehensive rewrite. It is fully PyTorch-native, stable, and structurally sound.
 
-1. Fork the repository.
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit your changes.
-4. Push to your branch.
-5. Open a pull request.
+**Recent Improvements:**
+- Complete unification of the benchmark suite to use PyTorch tensors (eliminating SciPy/NumPy mismatches).
+- Refactored core optimizers with proper PyTorch state management and closure support.
+- Added a functional smoke test suite (`test_smoke.py`).
 
-Please follow PEP 8 standards. Tests are not yet implemented; contributions to add testing infrastructure are highly encouraged.
+**Planned improvements:**
+- Integration with PyTorch Lightning.
+- Extended ablation studies for hyperparameter impact on large-scale datasets (CIFAR-10, ImageNet).
 
----
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+For questions or collaboration, please open an issue on GitHub.
 
 ---
 
@@ -157,39 +157,10 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 If you use Azure Sky Optimizer in your research or engineering projects, please cite:
 
+```text
+[Allan]. (2026). Azure Sky Optimizer: A Hybrid Approach for Exploration and Exploitation. GitHub Repository.
 ```
-[Allan]. (2025). Azure Sky Optimizer: A Hybrid Approach for Exploration and Exploitation. GitHub Repository.
-```
 
----
+## License
 
-## Project Status
-
-As of May 27, 2025, Azure Sky Optimizer is stable and production-ready.
-
-**Planned improvements:**
-- Testing on larger datasets (e.g., CIFAR-10, MNIST)
-- Ablation studies for hyperparameter impact
-- Integration with PyTorch Lightning
-- Adding a comprehensive test suite
-
-For questions or collaboration, please open an issue on GitHub.
-
-Kaggle Notebook: https://www.kaggle.com/code/allanwandia/non-convex-research
-
-Writeup It has old metrics so watch out: https://github.com/DarkStarStrix/CSE-Repo-of-Advanced-Computation-ML-and-Systems-Engineering/blob/main/Papers/Computer_Science/Optimization/Optimization_Algothrims_The_HimmelBlau_Function_Case_Study.pdf
-
----
-
-## Repository Structure
-
-```
-azure-sky-optimizer/
-├── azure_optimizer/
-│   ├── __init__.py
-│   ├── azure.py        # Updated Azure class
-│   ├── hooks.py
-│   └── usage_example.py  # Usage demonstrations
-├── README.md
-└── LICENSE
-```
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
