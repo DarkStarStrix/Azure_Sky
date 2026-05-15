@@ -1,13 +1,18 @@
-from .adam import AdamOptimizer
-from .SGD import SGDOptimizer
-from .azure_optim import Azure
-from .RMSprop import RMSpropOptimizer
+"""
+Optimizers module.
+"""
 from .base import BaseOptimizer
+from .adam import AdamOptimizer
+from .adamw import AdamWOptimizer
+from .SGD import SGDOptimizer
+from .RMSprop import RMSpropOptimizer
+from .azure_optim import Azure
 
 __all__ = [
+    'BaseOptimizer',
     'AdamOptimizer',
+    'AdamWOptimizer',
     'SGDOptimizer',
-    'Azure',
     'RMSpropOptimizer',
-    'BaseOptimizer'
+    'Azure'
 ]

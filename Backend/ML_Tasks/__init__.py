@@ -1,4 +1,10 @@
-from .CIFAR10Runner import load_cifar10, run_cifar10
-from .MNISTRunner import load_fashion_mnist, run_fashion_mnist
+"""
+ML Tasks module.
+"""
+from .CIFAR10Runner import CIFAR10Runner
+from .MNISTRunner import MNISTRunner
 
-__all__ = ['load_cifar10', 'run_cifar10', 'load_fashion_mnist', 'run_fashion_mnist']
+__all__ = [
+    'CIFAR10Runner',
+    'MNISTRunner'
+]

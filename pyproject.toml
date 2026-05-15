@@ -1,15 +1,23 @@
 [project]
-name = "azure"
-version = "0.1.0"
-description = "Add your description here"
+name = "azure-sky"
+version = "0.2.0"
+description = "AzureSky: A hybrid Adam + Simulated Annealing optimizer for PyTorch with a Gradio evaluation dashboard."
 requires-python = ">=3.10"
 dependencies = [
-    "benchmarkfcns==1.0.0",
-    "gradio>=5.34.0",
-    "matplotlib>=3.10.3",
-    "numpy==1.26.0",
-    "pytorch-lightning==2.5.1",
-    "scipy>=1.15.3",
-    "torch>=2.7.1",
-    "torchvision>=0.22.1",
+    "gradio>=4.0.0",
+    "matplotlib>=3.7.0",
+    "numpy>=1.24.0,<2.0.0",
+    "scipy>=1.11.0",
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "ruff>=0.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

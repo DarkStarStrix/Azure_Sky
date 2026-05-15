@@ -1,38 +1,35 @@
-# Himmelblau function benchmark
-
-from time import time
-from Base import BaseBenchmark
-from numpy.random import default_rng
-from scipy.optimize import minimize
+"""
+Himmelblau function benchmark.
+"""
+import torch
+from .Base import BaseBenchmark
 
 class Himmelblau(BaseBenchmark):
-    """Himmelblau's function benchmark."""
-
+    """
+    Himmelblau's function benchmark.
+    
+    A 2D multi-modal function, used to test the performance of optimization algorithms.
+    It has four identical local minima.
+    """
+    
     def __init__(self):
         super().__init__()
         self.name = "Himmelblau"
         self.dimensions = 2
-        self.global_minimum = [3, 2]
-        self.global_minimum_value = 0
+        # One of the global minima
+        self.set_global_min([3.0, 2.0])
+        self.global_minimum_value = 0.0
 
     @staticmethod
     def evaluate(x):
-        """Evaluate the Himmelblau function."""
-        return (x[0]**2 + x[1] - 11)**2 + (x[0] + x[1]**2 - 7)**2
-
-
-def himmelblau(x):
-    """Himmelblau's function."""
-    return (x[0]**2 + x[1] - 11)**2 + (x[0] + x[1]**2 - 7)**2
-
-def benchmark_himmelblau():
-    """Benchmark the Himmelblau function."""
-    rng = default_rng()
-    x0 = rng.uniform(-5, 5, size=2)
-    start_time = time()
-    result = minimize(himmelblau, x0, method='BFGS')
-    end_time = time()
-
-    print(f"Optimized parameters: {result.x}")
-    print(f"Function value at optimum: {result.fun}")
-    print(f"Time taken: {end_time - start_time:.4f} seconds")
+        """
+        Evaluate the Himmelblau function using PyTorch operations.
+        
+        Args:
+            x (torch.Tensor): Input tensor of shape (2,).
+            
+        Returns:
+            torch.Tensor: Evaluated value.
+        """
+        x1, x2 = x[0], x[1]
+        return (x1**2 + x2 - 11)**2 + (x1 + x2**2 - 7)**2
